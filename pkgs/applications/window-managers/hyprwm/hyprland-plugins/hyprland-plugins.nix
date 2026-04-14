@@ -10,16 +10,24 @@ let
             lib,
             cmake,
             fetchFromGitHub,
+            applyPatches,
             mkHyprlandPlugin,
           }:
           let
             version = "0.53.0";
 
-            hyprland-plugins-src = fetchFromGitHub {
-              owner = "hyprwm";
-              repo = "hyprland-plugins";
-              tag = "v${version}";
-              hash = "sha256-BSRT1Uu1ot4WfMfZc6KW0nwpmt2xl9wpUqmH/JoMTfk=";
+            hyprland-plugins-src = applyPatches {
+              src = fetchFromGitHub {
+                owner = "hyprwm";
+                repo = "hyprland-plugins";
+                tag = "v${version}";
+                hash = "sha256-BSRT1Uu1ot4WfMfZc6KW0nwpmt2xl9wpUqmH/JoMTfk=";
+              };
+              patches = [
+                ./patches/all-chase-hyprland.patch
+                ./patches/Fix-hyprtrails-compilation-errors.patch
+                ./patches/expo-chase-gesture-disableInhibit.patch
+              ];
             };
           in
           mkHyprlandPlugin {
@@ -43,7 +51,6 @@ let
         hyprbars = "window title";
         hyprexpo = "workspaces overview";
         hyprfocus = "flashfocus";
-        hyprscrolling = "scrolling layout";
         hyprtrails = "smooth trails behind moving windows";
         hyprwinwrap = "xwinwrap-like";
         xtra-dispatchers = "extra dispatchers";
